@@ -1,0 +1,11 @@
+---
+- name: "Ensure Kafka is downloaded locally"
+  stat:
+    path: "{{ playbook_dir }}/../kafka_2.13-3.8.0.tgz"
+  register: kafka_download_check
+
+- name: "Download Kafka if not already downloaded"
+  get_url:
+    url: "https://downloads.apache.org/kafka/3.8.0/kafka_2.13-3.8.0.tgz"
+    dest: "{{ playbook_dir }}/../kafka_2.13-3.8.0.tgz"
+  when: not kafka_download_check.stat.exists

@@ -1,0 +1,5 @@
+---
+- name: Check if local_user is defined
+  assert:
+    that: local_user is defined
+    fail_msg: "local_user is not defined"

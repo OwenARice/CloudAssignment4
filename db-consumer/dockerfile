@@ -1,0 +1,19 @@
+# Base image
+FROM python:3.9-slim
+
+# Set the working directory
+WORKDIR /home/cc
+
+# Install dependencies
+RUN apt-get update && apt-get install nano
+RUN pip install kafka-python requests
+
+# Copy the consumer script
+COPY db-consumer.py ./
+
+# Set environment variables for CouchDB connection
+ENV COUCHDB_URL=http://admin:password@192.168.5.39:5984
+ENV COUCHDB_DB=images
+
+# Run the consumer script
+CMD ["python", "./db-consumer.py"]

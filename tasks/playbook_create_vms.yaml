@@ -1,0 +1,25 @@
+---
+- name: Create 4 new VM instances on Chameleon Cloud
+  openstack.cloud.server:
+    cloud: "{{ project_id }}"
+    state: present
+    name: "{{ item }}"
+    flavor: "{{ flavor }}"
+    image: "{{ image }}"
+    key_name: "{{ keypair }}"
+    network: "{{ network }}"
+    security_groups:
+      - ENABLE_SSH
+      - default
+    auto_ip: false
+    wait: true
+  loop:
+    - "{{ instance_name }}-1"
+    - "{{ instance_name }}-2"
+    - "{{ instance_name }}-3"
+    - "{{ instance_name }}-4"
+  register: vm
+
+- name: Display VM info
+  debug:
+    var: vm

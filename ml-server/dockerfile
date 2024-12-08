@@ -1,0 +1,13 @@
+FROM python:3.8-slim
+
+RUN apt-get update && apt-get install -y python3-pip && rm -rf /var/lib/apt/lists/*
+
+RUN pip install torch torchvision flask kafka-python Pillow
+
+WORKDIR /app
+
+COPY . /app
+
+EXPOSE 5000
+
+CMD ["python", "ml_server.py"]

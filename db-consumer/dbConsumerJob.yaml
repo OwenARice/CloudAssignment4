@@ -1,0 +1,25 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: consumer-job
+spec:
+  template:
+    metadata:
+      labels:
+        app: consumer
+    spec:
+      containers:
+        - name: consumer
+          image: 192.168.5.39:5000/db-consumer # Use a Python image or a custom image
+          command: ["python", "/scripts/db-consumer.py"] # Command to run the script
+          volumeMounts:
+            - name: script-volume
+              mountPath: /scripts # Mounting the ConfigMap at /scripts
+      restartPolicy: Never
+      volumes:
+        - name: script-volume
+          configMap:
+            name: consumer-script-config # ConfigMap name containing db-consumer.py
+  backoffLimit: 4 # Optional retry limit
+

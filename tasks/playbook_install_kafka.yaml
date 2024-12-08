@@ -1,0 +1,23 @@
+---
+- name: "Check if Kafka is already installed in the user's home directory"
+  stat:
+    path: "/home/{{ cloud_user }}/kafka_2.13-3.8.0" # Modify this to the correct Kafka version and location
+  register: kafka_check
+
+- name: "Copy Kafka archive to the VMs"
+  copy:
+    src: "{{ playbook_dir }}/../kafka_2.13-3.8.0.tgz" # Path to the Kafka tarball on your local machine
+    dest: "/home/{{ cloud_user }}/kafka_2.13-3.8.0.tgz"
+  when: not kafka_check.stat.exists
+
+- name: "Extract Kafka in the user's home directory"
+  ansible.builtin.unarchive:
+    src: "/home/{{ cloud_user }}/kafka_2.13-3.8.0.tgz"
+    dest: "/home/{{ cloud_user }}"
+    remote_src: yes
+  when: not kafka_check.stat.exists
+
+- name: "Print Kafka installation completion message"
+  debug:
+    msg: "Kafka successfully installed in the user's home directory!"
+  when: not kafka_check.stat.exists

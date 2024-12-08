@@ -1,0 +1,33 @@
+## How to run CouchDB in a Docker container
+
+# clone the repository and cd in
+
+git clone https://github.com/Kevliao03/assignment2_cloud.git
+RUN cd ../assignment3_cloud/db-docker
+
+# build image
+
+docker build -t my-couchdb .
+
+# run container
+
+docker run -d -p 5984:5984 --name couchdb_container my-couchdb
+
+# if you get issues with ports or networking stuff, do this
+
+## delete it
+
+docker stop couchdb_container
+docker rm couchdb_container
+
+## restart docker
+
+systemctl restart docker
+
+## run it again
+
+docker run -d -p 5984:5984 --name couchdb_container my-couchdb
+
+# to add a database called "images"
+
+curl -X PUT http://admin:password@localhost:5984/images

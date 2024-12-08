@@ -1,0 +1,25 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: inference-job
+spec:
+  template:
+    metadata:
+      labels:
+        app: inference
+    spec:
+      containers:
+        - name: inference
+          image: 192.168.5.39:5000/inference-consumer # Use a Python image or a custom image
+          #command: ["python", "/scripts/inference-consumer.py"] # Command to run the script
+          #volumeMounts:
+          #  - name: script-volume
+          #    mountPath: /scripts # Mounting the ConfigMap at /scripts
+      restartPolicy: Never
+      volumes:
+        - name: script-volume
+          configMap:
+            name: inf-consumer-script-config # ConfigMap name containing inferencer-consumer.py
+  backoffLimit: 4 # Optional retry limit
+

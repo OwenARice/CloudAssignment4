@@ -1,0 +1,9 @@
+---
+- name: Disable swap temporarily
+  command: swapoff -a
+
+- name: Remove swap entry from fstab
+  replace:
+    path: /etc/fstab
+    regexp: ".*swap.*"
+    replace: '#\0'

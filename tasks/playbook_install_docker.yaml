@@ -1,0 +1,68 @@
+---
+- name: Create Docker GPG key directory
+  file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: 0755
+
+- name: Add Docker’s official GPG key with curl
+  ansible.builtin.command:
+    cmd: curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+
+- name: Run chmod on the GPG key
+  ansible.builtin.command:
+    cmd: chmod a+r /etc/apt/keyrings/docker.asc
+
+- name: Set up the Docker repository
+  ansible.builtin.shell: |
+    echo \
+    "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+    $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+    sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+- name: Verify docker.list exists
+  ansible.builtin.command:
+    cmd: cat /etc/apt/sources.list.d/docker.list
+
+- name: Update the apt package index
+  ansible.builtin.apt:
+    update_cache: yes
+
+- name: Install Docker
+  ansible.builtin.apt:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-buildx-plugin
+      - docker-compose-plugin
+    state: present
+
+- name: Add the current user to the docker group
+  ansible.builtin.user:
+    name: "{{ ansible_user }}" # This adds the current SSH user (cc) to the docker group
+    groups: docker
+    append: yes # Append the group to the user’s current group list, don't overwrite
+  become: true
+
+- name: Copy config.toml to /etc/containerd
+  copy:
+    src: ./config.toml # This file is in the same directory as the playbook
+    dest: /etc/containerd/config.toml
+    mode: "0644"
+
+- name: Copy daemon.json to /etc/docker
+  copy:
+    src: ./daemon.json #
+    dest: /etc/docker/daemon.json
+    mode: "0644"
+
+- name: Restart containerd service
+  systemd:
+    name: containerd
+    state: restarted
+
+- name: Restart docker service
+  systemd:
+    name: docker
+    state: restarted

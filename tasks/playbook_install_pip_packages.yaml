@@ -1,0 +1,13 @@
+---
+- name: Install Python packages using pip
+  ansible.builtin.pip:
+    name:
+      - ansible
+      - docker
+      - docker-compose
+      - paramiko
+      - pyyaml
+      - boto3
+      - botocore
+      - kafka-python
+    state: present

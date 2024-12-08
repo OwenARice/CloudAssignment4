@@ -1,0 +1,13 @@
+How to deploy the db-consumer on a vm:
+
+// git clone this repository to the vm:
+git clone https://github.com/Kevliao03/assignment2_cloud.git
+
+RUN cd ../assignment2_cloud/db-consumer
+
+RUN docker build -t db-consumer .
+
+RUN docker run -it db-consumer bash
+
+// Inside the container, run the following command to start the consumer script:
+RUN python db-consumer.py

@@ -1,0 +1,22 @@
+---
+- name: Retrieve VM information
+  openstack.cloud.server_info:
+    cloud: "CH-822922"
+    server: "{{ instance_name }}-{{ item }}"
+  loop:
+    - 1
+    - 2
+    - 3
+    - 4
+  register: vm_facts
+
+- name: Debug the returned VM facts
+  debug:
+    var: vm_facts
+
+- name: Extract IPs and update the inventory file
+  lineinfile:
+    path: Inventory # Update with the actual path to your inventory file
+    insertafter: '\[CloudVMs\]'
+    line: "{{ item.servers[0].addresses['CH-822922-net'][0]['addr'] }}"
+  loop: "{{ vm_facts.results }}"

@@ -1,0 +1,4 @@
+1. ssh into VM4
+2. cd into ml_server
+3. docker build -t ml-server .
+4. docker run --network=host ml-server     

@@ -1,0 +1,31 @@
+---
+- name: Ensure firewalld service is running
+  ansible.builtin.systemd:
+    name: firewalld
+    state: started
+    enabled: true
+
+- name: Open Kubernetes ports
+  firewalld:
+    port: "{{ item }}"
+    permanent: true
+    state: enabled
+  loop:
+    - "6443/tcp"   # Kubernetes API server
+    - "2379-2380/tcp" # etcd server client API
+    - "10250/tcp"  # Kubelet API
+    - "10257/tcp"  # kube-controller-manager
+    - "10259/tcp"  # kube-scheduler
+
+- name: Reload firewall rules
+  command: firewall-cmd --reload
+
+- name: Check firewalld status
+  ansible.builtin.systemd:
+    name: firewalld
+    state: started
+  register: firewalld_status
+
+- name: Print firewalld service status
+  debug:
+    msg: "Firewalld is {{ 'active' if firewalld_status.status['ActiveState'] == 'active' else 'stopped' }}"

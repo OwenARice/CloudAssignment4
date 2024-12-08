@@ -1,0 +1,17 @@
+---
+- name: Pull Docker registry image
+  docker_image:
+    name: registry
+    tag: "2"
+    source: pull
+
+- name: Run Docker registry container
+  docker_container:
+    name: MyRegistry
+    image: registry:2
+    state: started
+    restart_policy: always
+    published_ports:
+      - "5000:5000"
+    volumes:
+      - /var/lib/registry:/var/lib/registry

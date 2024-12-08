@@ -1,0 +1,21 @@
+#Producer yaml file
+
+apiVersion: batch/v1
+kind: Job         # We are testing the Deployment resource
+metadata:
+  name: producer
+  namespace: default              # A name must be given to the deployment in the metadata section
+spec:                     # This is the specification where we can even put the number of replicas
+  completions: 4
+  parallelism: 4
+                          # considered as ready and available. Default value is 0
+  template:               # Specified info needed to run the pod and what runs in the pod
+    metadata:
+      name: producer
+    spec:                 # actual specification
+      containers:
+      - name: producer       # Used by DNS
+        image: 192.168.5.39:5000/producer-image
+        args: ["kafka:9092"] #bootstrap server address
+      restartPolicy: Never
+  backoffLimit: 4

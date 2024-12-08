@@ -1,0 +1,4 @@
+1. ssh into vm3
+2. cd into inference_consumer folder
+3. docker build -t inference-consumer .
+4. docker run --network=host inference-consumer  
